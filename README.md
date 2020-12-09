@@ -13,7 +13,6 @@ Swing Server is an open-source Swing Chart repository server written in Python l
 ## Nonfunctional Requirements
 
 - Charts should be stored in the server filesystem.
-- The server should be able to run as the Docker container.
 - The server can be configurable using a config file.
 - Editing of charts has to be secured by user authentication.
 - New chart storage should be easily implementable.
