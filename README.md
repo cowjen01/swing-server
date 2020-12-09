@@ -1,6 +1,6 @@
 # SwingServer
 
-SwingServer is an open-source SwingChart repository server written in Python language.
+SwingServer is an open-source Swing chart repository server written in Python language.
 
 ## Functional Requirements
 
