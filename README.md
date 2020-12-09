@@ -1,6 +1,6 @@
-# SwingServer
+# Swing Server
 
-SwingServer is an open-source Swing chart repository server written in Python language.
+Swing Server is an open-source Swing Chart repository server written in Python language.
 
 ## Functional Requirements
 
@@ -13,8 +13,8 @@ SwingServer is an open-source Swing chart repository server written in Python la
 
 ## Nonfunctional Requirements
 
-- Charts will be stored in the server filesystem.
-- Server will be able to run as the Docker container.
-- Server will be configurable using config file.
-- Editing of charts will be secured by user authentication.
-- New chart storage has to be easily implementable.
+- Charts should be stored in the server filesystem.
+- The server should be able to run as the Docker container.
+- The server can be configurable using a config file.
+- Editing of charts has to be secured by user authentication.
+- New chart storage should be easily implementable.
