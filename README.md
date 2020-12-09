@@ -4,7 +4,6 @@ Swing Server is an open-source Swing Chart repository server written in Python l
 
 ## Functional Requirements
 
-- Retrieve information about the repository.
 - Download a specific version of the chart.
 - Upload a new version of the chart.
 - List all uploaded charts.
