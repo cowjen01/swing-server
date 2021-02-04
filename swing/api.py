@@ -1,10 +1,10 @@
-from zipfile import ZipFile
+from zipfile import ZipFile, BadZipFile
 from flask import Blueprint, jsonify, request, send_file
 from flask_login import login_required, current_user
-from werkzeug.exceptions import NotFound, BadRequest, Forbidden
+from werkzeug.exceptions import NotFound, BadRequest, Forbidden, InternalServerError
 
 from .models import Chart, Release, db
-from .helpers import list_to_dict, is_valid_version, is_valid_chart_name
+from .helpers import list_to_dict, is_valid_version, is_valid_chart_name, is_valid_filename
 from .config import Config
 from .storage import StorageType
 from .storage import LocalStorage
@@ -16,18 +16,19 @@ if Config.STORAGE_TYPE == StorageType.LOCAL:
     storage = LocalStorage(Config.STORAGE_LOCAL_DIR)
 
 
-@main.route('/status', methods=['GET'])
-def status():
-    charts_total = Chart.query.count()
-    return {
-        'status': 'ok',
-        'charts': charts_total
-    }
-
-
 @main.route('/chart', methods=['GET'])
 def list_charts():
-    charts = Chart.query.all()
+    query = request.args.get('query')
+
+    if query:
+        query_filter = (Chart.name.ilike(f'%{query}%') | Chart.description.ilike(f'%{query}%'))
+        charts = Chart.query.filter(query_filter).all()
+    else:
+        charts = Chart.query.all()
+
+    if not charts:
+        return jsonify([])
+
     response = list_to_dict(charts)
     return jsonify(response)
 
@@ -80,15 +81,21 @@ def create_release():
     if not file or file.filename == '':
         raise BadRequest('Missing chart archive')
 
-    # TODO: add file type validation
-    zip_file = ZipFile(file, 'r')
+    if not is_valid_filename(file.filename):
+        raise BadRequest('Invalid archive file')
 
-    if not is_chart_valid(zip_file):
+    try:
+        zip_file = ZipFile(file, 'r')
+
+        if not is_chart_valid(zip_file):
+            zip_file.close()
+            raise BadRequest('Invalid chart structure or definition')
+
+        definition = read_definition(zip_file)
+
         zip_file.close()
-        raise BadRequest('Invalid chart structure or definition')
-
-    definition = read_definition(zip_file)
-    zip_file.close()
+    except BadZipFile:
+        raise BadRequest('Invalid archive file')
 
     chart = Chart.query.filter_by(name=definition.name).first()
 
@@ -96,7 +103,10 @@ def create_release():
         if chart.user_id != current_user.id:
             raise Forbidden('Forbidden release operation')
     else:
-        chart = Chart(name=definition.name, description=definition.description, user_id=current_user.id)
+        chart = Chart(
+            name=definition.name,
+            description=definition.description,
+            user_id=current_user.id)
         db.session.add(chart)
         db.session.commit()
 
@@ -139,12 +149,13 @@ def list_releases():
     release_query = Release.query.order_by(Release.version.desc())
 
     if version:
-        releases = release_query.filter(Release.version.like(f'{version}%')).all()
+        version_filter = Release.version.like(f'{version}%')
+        releases = release_query.filter(version_filter).all()
     else:
         releases = release_query.all()
 
     if not releases:
-        raise NotFound('No release found')
+        return jsonify([])
 
     response = list_to_dict(releases)
     return jsonify(response)
@@ -158,7 +169,22 @@ def fetch_release(release_id, filename):
         raise NotFound('Release not found')
 
     file_data = storage.download(release_id)
+
+    if not file_data:
+        raise InternalServerError('Download failed')
+
     file_name = f'{release.get_name()}.zip'
 
-    return send_file(file_data, mimetype='application/zip', as_attachment=True, attachment_filename=file_name)
+    return send_file(file_data,
+                     mimetype='application/zip',
+                     as_attachment=True,
+                     attachment_filename=file_name)
 
+
+@main.route('/status', methods=['GET'])
+def status():
+    charts_total = Chart.query.count()
+    return {
+        'status': 'ok',
+        'charts': charts_total
+    }

@@ -8,7 +8,7 @@ with open('README.md') as f:
 setup(
     name='swing_server',
     version='0.1',
-    description='Provides validation of GitHub commits',
+    description='Provides repostitory for Docker Compose files',
     long_description=long_description,
     author='Jan Šafařík',
     author_email='cowjen01@gmail.com',
@@ -23,7 +23,6 @@ setup(
         'flask-login~=0.5.0',
         'flask-sqlalchemy~=2.4.4',
         'flask-session~=0.3.2',
-        'bcrypt~=3.2.0',
         'pyyaml~=5.4.1',
         'werkzeug~=1.0.1'
     ],

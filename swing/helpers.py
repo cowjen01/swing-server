@@ -1,13 +1,15 @@
 import os
 import re
-import bcrypt
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 version_regex = r'^\d+(?:\.\d+)+$'
 name_regex = r'^[a-z]+(?:-[a-z]+)*$'
+zip_regex = r'^[a-zA-Z0-9\-]+\.zip'
 
 
-def contains(callback, lst) -> bool:
-    return next((x for x in lst if callback(x)), None) is not None
+def is_valid_filename(filename) -> bool:
+    return bool(re.match(zip_regex, filename))
 
 
 def is_valid_version(version) -> bool:
@@ -26,13 +28,9 @@ def list_to_dict(arr):
     return [x.to_dict() for x in arr]
 
 
-def generate_salt() -> bytes:
-    return bcrypt.gensalt()
-
-
-def hash_password(password: str, salt: bytes) -> str:
-    return str(bcrypt.hashpw(bytes(password, encoding='utf8'), salt))
+def hash_password(password: str) -> str:
+    return generate_password_hash(password, salt_length=12)
 
 
 def check_password(password: str, hashed_password: str) -> bool:
-    return bcrypt.checkpw(bytes(password, encoding='utf8'), bytes(hashed_password, encoding='utf8'))
+    return check_password_hash(hashed_password, password)

@@ -14,7 +14,6 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, nullable=False, unique=True)
     hashed_password = db.Column(db.Text, nullable=False)
-    salt = db.Column(db.Text, nullable=False)
     active = db.Column(db.Boolean, nullable=False, default=False)
 
     def check_password(self, password):
