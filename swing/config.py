@@ -16,6 +16,8 @@ class Config:
     STORAGE_LOCAL_DIR = environ.get('STORAGE_LOCAL_DIR')
     INIT_USER_EMAIL = environ.get('INIT_USER_EMAIL')
     INIT_USER_PASSWORD = environ.get('INIT_USER_PASSWORD')
+    SESSION_TYPE = environ.get('SESSION_TYPE', 'sqlalchemy')
+    SESSION_FILE_DIR = environ.get('SESSION_FILE_DIR')
 
 
 def validate_config():
@@ -34,3 +36,13 @@ def validate_config():
 
         if not is_valid_path(Config.STORAGE_LOCAL_DIR):
             raise Exception('Invalid STORAGE_LOCAL_DIR path')
+
+    if Config.SESSION_TYPE == 'filesystem':
+        if not Config.SESSION_FILE_DIR:
+            raise Exception('Missing SESSION_FILE_DIR variable')
+
+        if not is_valid_path(Config.SESSION_FILE_DIR):
+            raise Exception('Invalid SESSION_FILE_DIR path')
+
+    if Config.INIT_USER_EMAIL and not Config.INIT_USER_PASSWORD:
+        raise Exception('Missing INIT_USER_PASSWORD variable')

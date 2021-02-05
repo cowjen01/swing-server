@@ -7,7 +7,7 @@ from zipfile import ZipFile, ZipInfo
 from swing.storage import LocalStorage
 
 ABS_PATH = os.path.abspath(os.path.dirname(__file__))
-CHARTS_PATH = os.path.join(ABS_PATH, 'fixtures', 'uploads')
+CHARTS_PATH = os.path.join(ABS_PATH, 'uploads')
 
 
 def create_zip():

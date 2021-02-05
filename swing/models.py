@@ -25,6 +25,11 @@ class User(UserMixin, db.Model):
     def get_id(self):
         return self.id
 
+    def to_dict(self):
+        return {
+            'email': self.email
+        }
+
 
 class Chart(db.Model):
     __tablename__ = 'charts'
