@@ -80,11 +80,13 @@ def remove_chart(chart_name):
 def create_release():
     file = request.files.get('chart')
 
+    print(request.files)
+
     if not file or file.filename == '':
         raise BadRequest('Missing chart archive')
 
-    if not is_valid_filename(file.filename):
-        raise BadRequest('Invalid archive file')
+    if not is_valid_filename(file.filename.split('/')[-1]):
+        raise BadRequest('Invalid archive file name')
 
     try:
         zip_file = ZipFile(file, 'r')

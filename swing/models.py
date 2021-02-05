@@ -2,10 +2,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import datetime
 
-from .helpers import check_password
+from .helpers import check_password, hash_password
 from .config import Config
 
 db = SQLAlchemy()
+
+
+def make_user(email, password):
+    password = hash_password(password)
+    user = User(
+        email=email,
+        hashed_password=password,
+        active=True)
+    return user
 
 
 class User(UserMixin, db.Model):

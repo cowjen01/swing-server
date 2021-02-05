@@ -1,7 +1,7 @@
 from os import environ, path
 from dotenv import load_dotenv
 
-from .helpers import is_valid_path
+from .helpers import is_valid_path, create_directory
 from .storage import StorageType
 
 basedir = path.abspath(path.dirname(__file__))
@@ -35,14 +35,18 @@ def validate_config():
         if not Config.STORAGE_LOCAL_DIR:
             raise Exception('Missing STORAGE_LOCAL_DIR variable')
 
-        if not is_valid_path(Config.STORAGE_LOCAL_DIR):
+        try:
+            create_directory(Config.STORAGE_LOCAL_DIR)
+        except OSError as e:
             raise Exception('Invalid STORAGE_LOCAL_DIR path')
 
     if Config.SESSION_TYPE == 'filesystem':
         if not Config.SESSION_FILE_DIR:
             raise Exception('Missing SESSION_FILE_DIR variable')
 
-        if not is_valid_path(Config.SESSION_FILE_DIR):
+        try:
+            create_directory(Config.SESSION_FILE_DIR)
+        except OSError as e:
             raise Exception('Invalid SESSION_FILE_DIR path')
 
     if Config.INIT_USER_EMAIL and not Config.INIT_USER_PASSWORD:

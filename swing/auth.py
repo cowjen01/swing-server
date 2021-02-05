@@ -2,22 +2,12 @@ from flask import Blueprint, request, current_app
 from flask_login import login_user, LoginManager, current_user, logout_user
 from werkzeug.exceptions import NotFound, BadRequest, Unauthorized, Forbidden
 
-from .models import User, db
+from .models import User, db, make_user
 from .config import Config
-from .helpers import hash_password
 
 login_manager = LoginManager()
 
 auth = Blueprint('auth', __name__)
-
-
-def create_user(email, password):
-    password = hash_password(password)
-    user = User(
-        email=email,
-        hashed_password=password,
-        active=True)
-    return user
 
 
 @auth.before_app_first_request
@@ -26,7 +16,7 @@ def init_user():
         user = User.query.filter_by(email=Config.INIT_USER_EMAIL).first()
 
         if not user:
-            user = create_user(Config.INIT_USER_EMAIL, Config.INIT_USER_PASSWORD)
+            user = make_user(Config.INIT_USER_EMAIL, Config.INIT_USER_PASSWORD)
 
             db.session.add(user)
             db.session.commit()

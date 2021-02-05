@@ -34,3 +34,8 @@ def hash_password(password: str) -> str:
 
 def check_password(password: str, hashed_password: str) -> bool:
     return check_password_hash(hashed_password, password)
+
+
+def create_directory(path: str):
+    if not os.path.exists(path):
+        os.makedirs(path)

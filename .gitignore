@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 .idea/
-/uploads
+uploads/
+tests/sessions/
