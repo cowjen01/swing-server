@@ -20,11 +20,13 @@ if Config.STORAGE_TYPE == StorageType.LOCAL:
 def list_charts():
     query = request.args.get('query')
 
+    chart_query = Chart.query.order_by(Chart.name.desc())
+
     if query:
-        query_filter = (Chart.name.ilike(f'%{query}%') | Chart.description.ilike(f'%{query}%'))
-        charts = Chart.query.filter(query_filter).all()
+        name_filter = (Chart.name.ilike(f'%{query}%') | Chart.description.ilike(f'%{query}%'))
+        charts = chart_query.filter(name_filter).all()
     else:
-        charts = Chart.query.all()
+        charts = chart_query.all()
 
     if not charts:
         return jsonify([])
@@ -107,6 +109,7 @@ def create_release():
             name=definition.name,
             description=definition.description,
             user_id=current_user.id)
+
         db.session.add(chart)
         db.session.commit()
 
