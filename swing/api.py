@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from werkzeug.exceptions import NotFound, BadRequest, Forbidden, InternalServerError
 
 from .models import Chart, Release, db
-from .helpers import list_to_dict, is_valid_version, is_valid_chart_name, is_valid_filename
+from .helpers import *
 from .config import Config
 from .storage import StorageType
 from .storage import LocalStorage
@@ -55,13 +55,14 @@ def remove_chart(chart_name):
         if not is_valid_version(version):
             raise BadRequest('Invalid release version')
 
-        release = Release.query.filter_by(version=version).first()
+        release = Release.query.filter_by(chart_id=chart.id, version=version).first()
 
         if not release:
             raise NotFound(f'Release {version} not found')
 
         storage.delete(release.id)
         db.session.delete(release)
+        db.session.commit()
 
         return release.to_dict()
 
@@ -79,8 +80,6 @@ def remove_chart(chart_name):
 @login_required
 def create_release():
     file = request.files.get('chart')
-
-    print(request.files)
 
     if not file or file.filename == '':
         raise BadRequest('Missing chart archive')
@@ -166,14 +165,24 @@ def list_releases():
     return jsonify(response)
 
 
-@main.route('/release/<int:release_id>/<filename>', methods=['GET'])
-def fetch_release(release_id, filename):
-    release = Release.query.get(int(release_id))
+@main.route('/release/<filename>', methods=['GET'])
+def fetch_release(filename):
+    if not is_valid_filename(filename):
+        raise BadRequest('Invalid archive file name')
+
+    chart_name, version = parse_filename(filename)
+
+    chart = Chart.query.filter_by(name=chart_name).first()
+
+    if not chart:
+        raise NotFound('Chart not found')
+
+    release = Release.query.filter_by(chart_id=chart.id, version=version).first()
 
     if not release:
         raise NotFound('Release not found')
 
-    file_data = storage.download(release_id)
+    file_data = storage.download(release.id)
 
     if not file_data:
         raise InternalServerError('Download failed')

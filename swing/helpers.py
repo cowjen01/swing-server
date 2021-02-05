@@ -5,7 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 version_regex = r'^\d+(?:\.\d+)+$'
 name_regex = r'^[a-z]+(?:-[a-z]+)*$'
-zip_regex = r'^[a-zA-Z0-9\-]+\.zip'
+zip_regex = r'^[a-z]+(?:-[a-z]+)*\-\d+(?:\.\d+)+\.zip'
 
 
 def is_valid_filename(filename) -> bool:
@@ -39,3 +39,11 @@ def check_password(password: str, hashed_password: str) -> bool:
 def create_directory(path: str):
     if not os.path.exists(path):
         os.makedirs(path)
+
+
+def parse_filename(filename):
+    chunks = filename[:-4].split('-')
+    chart_name = '-'.join(chunks[:-1])
+    version = chunks[-1]
+
+    return chart_name, version

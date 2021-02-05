@@ -1,34 +1,24 @@
-import os
-import io
 import unittest
 from werkzeug.datastructures import FileStorage
-from zipfile import ZipFile, ZipInfo
 
 from swing.storage import LocalStorage
-
-ABS_PATH = os.path.abspath(os.path.dirname(__file__))
-CHARTS_PATH = os.path.join(ABS_PATH, 'uploads')
-
-
-def create_zip():
-    archive = io.BytesIO()
-    with ZipFile(archive, 'w') as zip_archive:
-        file = ZipInfo('chart.yaml')
-        zip_archive.writestr(file, b'name: redis')
-    return archive
+from helpers import create_test_zip, get_fixtures_path
 
 
 class StorgeTestCase(unittest.TestCase):
-    def setUp(self):
-        self.storage = LocalStorage(CHARTS_PATH)
-        self.release_id = 15
+    storage = None
+    release_id = 15
+
+    @classmethod
+    def setUpClass(cls):
+        cls.storage = LocalStorage(get_fixtures_path('charts'))
 
     def test_a_nofile(self):
         file = self.storage.download(self.release_id)
         self.assertIsNone(file)
 
     def test_b_upload(self):
-        archive = create_zip()
+        archive = create_test_zip()
 
         file = FileStorage(archive, filename='redis.zip')
         self.storage.upload(self.release_id, file)

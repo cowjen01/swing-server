@@ -1,4 +1,4 @@
-from flask import Blueprint, request, current_app
+from flask import Blueprint, request
 from flask_login import login_user, LoginManager, current_user, logout_user
 from werkzeug.exceptions import NotFound, BadRequest, Unauthorized, Forbidden
 
@@ -62,7 +62,7 @@ def login():
 @auth.route('/logout', methods=['POST'])
 def logout():
     if not current_user.is_authenticated:
-        raise Forbidden('Not logged in')
+        return {}
 
     logout_user()
 

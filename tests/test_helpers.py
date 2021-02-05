@@ -1,18 +1,26 @@
 import pytest
 
 from swing.helpers import *
-
-ABS_PATH = os.path.abspath(os.path.dirname(__file__))
-CHARTS_PATH = os.path.join(ABS_PATH, 'fixtures', 'charts')
+from helpers import get_fixtures_path
 
 
 @pytest.mark.parametrize('filename,expected', [
-    ('chart-redis.zip', True),
-    ('chart.zip', True),
-    ('readme.md', False)
+    ('chart-redis-2.3.zip', True),
+    ('chart-1.3.5.zip', True),
+    ('readme.md', False),
+    ('chart.zip', False),
+    ('-1.3.5.zip', False),
 ])
 def test_validate_filename(filename, expected):
     assert is_valid_filename(filename) == expected
+
+
+@pytest.mark.parametrize('filename,expected', [
+    ('chart-redis-2.3.zip', ('chart-redis', '2.3')),
+    ('redis-1.3.5.zip', ('redis', '1.3.5')),
+])
+def test_parse_filename(filename, expected):
+    assert parse_filename(filename) == expected
 
 
 @pytest.mark.parametrize('version,expected', [
@@ -37,7 +45,7 @@ def test_validate_chart_name(name, expected):
 
 @pytest.mark.parametrize('path,expected', [
     ('foo/path/boo', False),
-    (CHARTS_PATH, True),
+    (get_fixtures_path('charts'), True),
 ])
 def test_validate_path(path, expected):
     assert is_valid_path(path) == expected

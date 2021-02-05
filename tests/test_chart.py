@@ -3,10 +3,7 @@ import os
 from zipfile import ZipFile
 
 from swing.chart import *
-
-
-ABS_PATH = os.path.abspath(os.path.dirname(__file__))
-CHARTS_PATH = os.path.join(ABS_PATH, 'fixtures', 'charts')
+from helpers import get_fixtures_path
 
 
 @pytest.mark.parametrize('definition,passed', [
@@ -63,7 +60,7 @@ def test_validate_content(content, passed):
 
 
 def test_read_definition():
-    chart_path = os.path.join(CHARTS_PATH, 'chart-valid.zip')
+    chart_path = os.path.join(get_fixtures_path('charts'), 'chart-valid.zip')
     with ZipFile(chart_path) as zip_archive:
         definition = read_definition(zip_archive)
 
@@ -78,6 +75,6 @@ def test_read_definition():
     ('chart-invalid-3.zip', False),
 ])
 def test_validate_chart(filename, passed):
-    chart_path = os.path.join(CHARTS_PATH, filename)
+    chart_path = os.path.join(get_fixtures_path('charts'), filename)
     with ZipFile(chart_path) as zip_archive:
         assert is_chart_valid(zip_archive) == passed
