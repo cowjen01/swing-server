@@ -12,23 +12,37 @@ class LoginTest(TestCase):
     def create_app(self):
         return create_app()
 
+    def post_login(self, credentials):
+        return self.client.post('/login', headers={'Authorization': f'Basic {credentials}'})
+
     def test_login(self):
-        credentials = b64encode(b'cowjen01@gmail.com:pass123').decode('utf-8')
-        response = self.client.post('/login', headers={'Authorization': f'Basic {credentials}'})
+        credentials = b64encode(b'user123@gmail.com:pass123').decode('utf-8')
+        response = self.post_login(credentials)
         self.assert200(response)
+        self.assertEqual(response.json.get('email'), 'user123@gmail.com')
 
     def test_missing_credentials(self):
         response = self.client.post('/login')
         self.assert400(response)
 
-    def test_invalid_authorization(self):
-        credentials = b64encode(b'cowjen01@gmail.com').decode('utf-8')
-        response = self.client.post('/login', headers={'Authorization': f'Basic {credentials}'})
+    def test_invalid_header(self):
+        credentials = b64encode(b'user123@gmail.com').decode('utf-8')
+        response = self.post_login(credentials)
         self.assert400(response)
+
+    def test_invalid_credentials(self):
+        credentials = b64encode(b'user123@gmail.com:secret456').decode('utf-8')
+        response = self.post_login(credentials)
+        self.assert401(response)
+
+    def test_user_not_found(self):
+        credentials = b64encode(b'user234@gmail.com:pass123').decode('utf-8')
+        response = self.post_login(credentials)
+        self.assert404(response)
 
     def setUp(self):
         db.create_all()
-        user = create_user('cowjen01@gmail.com', 'pass123')
+        user = create_user('user123@gmail.com', 'pass123')
         db.session.add(user)
         db.session.commit()
 

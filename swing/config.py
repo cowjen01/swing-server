@@ -18,6 +18,7 @@ class Config:
     INIT_USER_PASSWORD = environ.get('INIT_USER_PASSWORD')
     SESSION_TYPE = environ.get('SESSION_TYPE', 'sqlalchemy')
     SESSION_FILE_DIR = environ.get('SESSION_FILE_DIR')
+    SESSION_PERMANENT = (environ.get('SESSION_PERMANENT', 'True') == 'True')
 
 
 def validate_config():

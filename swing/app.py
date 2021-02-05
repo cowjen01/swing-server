@@ -21,6 +21,7 @@ def create_app():
     app.config['SESSION_SQLALCHEMY'] = db
     app.config['SESSION_FILE_DIR'] = Config.SESSION_FILE_DIR
     app.config['SECRET_KEY'] = Config.SECRET_KEY
+    app.config['SESSION_PERMANENT'] = Config.SESSION_PERMANENT
 
     db.init_app(app)
     session.init_app(app)
