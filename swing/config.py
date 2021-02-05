@@ -14,6 +14,8 @@ class Config:
     PUBLIC_URL = environ.get('PUBLIC_URL', 'http://localhost:5000')
     STORAGE_TYPE = environ.get('STORAGE_TYPE', StorageType.LOCAL)
     STORAGE_LOCAL_DIR = environ.get('STORAGE_LOCAL_DIR')
+    INIT_USER_EMAIL = environ.get('INIT_USER_EMAIL')
+    INIT_USER_PASSWORD = environ.get('INIT_USER_PASSWORD')
 
 
 def validate_config():

@@ -43,4 +43,6 @@ def create_app():
         response.content_type = 'application/json'
         return response
 
+    db.create_all(app=app)
+
     return app

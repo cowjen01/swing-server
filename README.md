@@ -20,3 +20,5 @@ Swing Server is an open-source Swing Chart repository server written in Python l
 - https://flask-sqlalchemy.palletsprojects.com/en/2.x/
 - https://medium.com/dev-bits/ultimate-guide-for-working-with-i-o-streams-and-zip-archives-in-python-3-6f3cf96dca50
 - https://stackoverflow.com/questions/9419162/download-returned-zip-file-from-url
+- https://pythonhosted.org/Flask-Testing/
+- https://naucse.python.cz/2020/nipyt-zima/intro/testing/
