@@ -8,5 +8,4 @@ pyyaml~=5.4.1
 werkzeug~=1.0.1
 
 pytest~=6.2.2
-flexmock~=0.10.4
 pep8~=1.7.1
