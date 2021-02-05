@@ -19,6 +19,7 @@ class ApiGeneralTest(ApiTestCase):
         self.assert200(response)
         self.assertEqual(len(response.json), 1)
         self.assertEqual(response.json[0].get('name'), 'psql')
+        self.assertIsNotNone(response.json[0].get('description'))
 
     def test_search_charts_no_result(self):
         response = self.client.get('/chart', query_string={'query': 'foo'})
@@ -136,6 +137,8 @@ class ApiReleaseTest(ApiTestCase):
         self.assert200(response)
         self.assertEqual(len(response.json), 1)
         self.assertEqual(response.json[0].get('version'), '1.0.0')
+        self.assertIsNotNone(response.json[0].get('releaseDate'))
+        self.assertEqual(response.json[0].get('archiveUrl'), 'http://localhost:5000/release/redis-1.0.0.zip')
 
     def test_d_download_release_invalid(self):
         response = self.client.get(f'/release/redis-2.4.0.zip')

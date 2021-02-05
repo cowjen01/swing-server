@@ -72,5 +72,5 @@ class Release(db.Model):
         return {
             'version': self.version,
             'releaseDate': self.release_date,
-            'file': f'{Config.PUBLIC_URL}/release/{self.get_name()}.zip'
+            'archiveUrl': f'{Config.PUBLIC_URL}/release/{self.get_name()}.zip'
         }
