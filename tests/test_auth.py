@@ -1,4 +1,4 @@
-from swing.models import db
+from swing_server.models import db
 from helpers import ApiTestCase
 
 

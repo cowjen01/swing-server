@@ -1,7 +1,7 @@
 import unittest
 from werkzeug.datastructures import FileStorage
 
-from swing.storage import LocalStorage
+from swing_server.storage import LocalStorage
 from helpers import create_test_zip, get_fixtures_path
 
 

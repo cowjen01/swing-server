@@ -2,7 +2,7 @@ import pytest
 import os
 from zipfile import ZipFile
 
-from swing.chart import *
+from swing_server.chart import *
 from helpers import get_fixtures_path
 
 

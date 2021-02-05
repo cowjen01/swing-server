@@ -15,7 +15,7 @@ setup(
     keywords='docker,swarm,repository',
     license='Apache License 2.0',
     url='https://github.com/docker-swing/swing-server',
-    packages=['swing'],
+    packages=['swing_server'],
     install_requires=[
         'flask~=1.1.2',
         'python-dotenv~=0.15.0',

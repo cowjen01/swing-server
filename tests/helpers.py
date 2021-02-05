@@ -4,8 +4,8 @@ import unittest
 from zipfile import ZipFile, ZipInfo
 from base64 import b64encode
 
-from swing.app import create_app
-from swing.models import db, make_user
+from swing_server.app import create_app
+from swing_server.models import db, make_user
 
 
 class ApiTestCase(unittest.TestCase):

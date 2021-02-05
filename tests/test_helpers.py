@@ -1,6 +1,6 @@
 import pytest
 
-from swing.helpers import *
+from swing_server.helpers import *
 from helpers import get_fixtures_path
 
 

@@ -1,6 +1,6 @@
 import os
 
-from swing.models import db, Chart, Release, make_user
+from swing_server.models import db, Chart, Release, make_user
 from helpers import get_fixtures_path, ApiTestCase
 
 
