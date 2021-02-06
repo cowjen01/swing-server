@@ -47,12 +47,12 @@ def test_invalid_definition(definition):
         'configs/s3cmd',
         'chart.yaml',
         'values.yml',
-        'deployment.yaml.j2'
+        'deployment.yaml'
     ],
     [
         'values.yml',
         'chart.yml',
-        'deployment.yml.j2'
+        'deployment.yml'
     ]
 ])
 def test_valid_archive_files(files):
@@ -71,7 +71,7 @@ def test_valid_archive_files(files):
     [
         'values.yml',
         'chart.yml',
-        'deployment.yml.j2',
+        'deployment.yml',
         'requirements.yaml'
     ]
 ])

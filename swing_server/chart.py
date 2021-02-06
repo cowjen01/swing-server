@@ -37,7 +37,7 @@ def validate_archive_files(files):
     if 'values.yaml' not in files and 'values.yml' not in files:
         raise InvalidChartError(ErrorMessage.CHART_FILES_VALUES_EMPTY)
 
-    if 'deployment.yaml.j2' not in files and 'deployment.yml.j2' not in files:
+    if 'deployment.yaml' not in files and 'deployment.yml' not in files:
         raise InvalidChartError(ErrorMessage.CHART_FILES_DEPLOYMENT_EMPTY)
 
     if 'requirements.yaml' in files or 'requirements.yml' in files:
