@@ -167,7 +167,7 @@ def fetch_release(filename):
     if not is_valid_filename(filename):
         raise BadRequest('Invalid archive file name')
 
-    chart_name, version = parse_filename(filename)
+    chart_name, version = parse_archive_filename(filename)
 
     chart = Chart.query.filter_by(name=chart_name).first()
 

@@ -20,7 +20,7 @@ def is_valid_chart_name(name) -> bool:
     return bool(re.match(name_regex, name))
 
 
-def is_valid_path(path: str) -> bool:
+def is_readable_dir(path: str) -> bool:
     return os.path.isdir(path) and os.access(path, os.R_OK)
 
 
@@ -41,7 +41,7 @@ def create_directory(path: str):
         os.makedirs(path)
 
 
-def parse_filename(filename):
+def parse_archive_filename(filename):
     chunks = filename[:-4].split('-')
     chart_name = '-'.join(chunks[:-1])
     version = chunks[-1]

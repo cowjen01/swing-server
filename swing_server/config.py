@@ -1,7 +1,7 @@
 from os import environ, path
 from dotenv import load_dotenv
 
-from .helpers import is_valid_path, create_directory
+from .helpers import is_readable_dir, create_directory
 from .storage import StorageType
 
 basedir = path.abspath(path.dirname(__file__))

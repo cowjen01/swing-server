@@ -20,7 +20,7 @@ def test_validate_filename(filename, expected):
     ('redis-1.3.5.zip', ('redis', '1.3.5')),
 ])
 def test_parse_filename(filename, expected):
-    assert parse_filename(filename) == expected
+    assert parse_archive_filename(filename) == expected
 
 
 @pytest.mark.parametrize('version,expected', [
@@ -48,7 +48,7 @@ def test_validate_chart_name(name, expected):
     (get_fixtures_path('charts'), True),
 ])
 def test_validate_path(path, expected):
-    assert is_valid_path(path) == expected
+    assert is_readable_dir(path) == expected
 
 
 @pytest.mark.parametrize('password', [
