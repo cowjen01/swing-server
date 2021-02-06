@@ -1,6 +1,8 @@
 import yaml
 
 from .helpers import is_valid_version, is_valid_chart_name
+from .errors import InvalidChartError
+from .locals import ErrorMessage
 
 
 class ChartDefinition:
@@ -14,30 +16,32 @@ class ChartDefinition:
         return cls(json.get('name'), json.get('version'), json.get('description'))
 
 
-def is_definition_valid(definition) -> bool:
-    if not definition.name or not definition.version:
-        return False
+def validate_chart_definition(definition):
+    if not definition.name:
+        raise InvalidChartError(ErrorMessage.CHART_DEFINITION_NAME_EMPTY)
+
+    if not definition.version:
+        raise InvalidChartError(ErrorMessage.CHART_DEFINITION_VERSION_EMPTY)
 
     if not is_valid_chart_name(definition.name):
-        return False
+        raise InvalidChartError(ErrorMessage.CHART_DEFINITION_NAME_INVALID)
 
     if not is_valid_version(definition.version):
-        return False
-
-    return True
+        raise InvalidChartError(ErrorMessage.CHART_DEFINITION_VERSION_INVALID)
 
 
-def is_content_valid(content) -> bool:
-    if 'chart.yaml' not in content and 'chart.yml' not in content:
-        return False
+def validate_archive_files(files):
+    if 'chart.yaml' not in files and 'chart.yml' not in files:
+        raise InvalidChartError(ErrorMessage.CHART_FILES_DEFINITION_EMPTY)
 
-    if 'values.yaml' not in content and 'values.yml' not in content:
-        return False
+    if 'values.yaml' not in files and 'values.yml' not in files:
+        raise InvalidChartError(ErrorMessage.CHART_FILES_VALUES_EMPTY)
 
-    if 'deployment.yaml.j2' not in content and 'deployment.yml.j2' not in content:
-        return False
+    if 'deployment.yaml.j2' not in files and 'deployment.yml.j2' not in files:
+        raise InvalidChartError(ErrorMessage.CHART_FILES_DEPLOYMENT_EMPTY)
 
-    return True
+    if 'requirements.yaml' in files or 'requirements.yml' in files:
+        raise InvalidChartError(ErrorMessage.CHART_FILES_REQUIREMENTS_PRESENT)
 
 
 def read_definition(zip_archive) -> ChartDefinition:
@@ -54,14 +58,8 @@ def read_definition(zip_archive) -> ChartDefinition:
     return definition
 
 
-def is_chart_valid(zip_archive) -> bool:
-    if not is_content_valid(zip_archive.namelist()):
-        return False
+def validate_chart_archive(zip_archive):
+    validate_archive_files(zip_archive.namelist())
 
     definition = read_definition(zip_archive)
-
-    if not is_definition_valid(definition):
-        return False
-
-    return True
-
+    validate_chart_definition(definition)

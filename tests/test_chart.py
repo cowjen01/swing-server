@@ -3,60 +3,81 @@ import os
 from zipfile import ZipFile
 
 from swing_server.chart import *
+from swing_server.errors import InvalidChartError
 from helpers import get_fixtures_path
 
 
-@pytest.mark.parametrize('definition,passed', [
-    (ChartDefinition.from_dict({
-        'name': 'redis 2',
-        'version': '1.0.0',
-        'description': 'my redis chart'
-    }), False),
-    (ChartDefinition.from_dict({
+@pytest.mark.parametrize('definition', [
+    ChartDefinition.from_dict({
         'name': 'redis-chart',
         'version': '2.3.1'
-    }), True),
-    (ChartDefinition.from_dict({
+    }),
+    ChartDefinition.from_dict({
         'name': 'postgresql',
         'version': '2.3',
         'description': 'database chart'
-    }), True),
-    (ChartDefinition.from_dict({
+    }),
+])
+def test_valid_definition(definition):
+    validate_chart_definition(definition)
+
+
+@pytest.mark.parametrize('definition', [
+    ChartDefinition.from_dict({
+        'name': 'redis 2',
+        'version': '1.0.0',
+        'description': 'my redis chart'
+    }),
+    ChartDefinition.from_dict({
         'name': 'redis-chart',
         'version': 'v2.1'
-    }), False),
-    (ChartDefinition.from_dict({
+    }),
+    ChartDefinition.from_dict({
         'name': 'psql-chart',
         'version': '2.'
-    }), False),
+    }),
 ])
-def test_validate_definition(definition, passed):
-    assert is_definition_valid(definition) == passed
+def test_invalid_definition(definition):
+    with pytest.raises(InvalidChartError):
+        validate_chart_definition(definition)
 
 
-@pytest.mark.parametrize('content,passed', [
-    ([
+@pytest.mark.parametrize('files', [
+    [
         'configs/s3cmd',
         'chart.yaml',
         'values.yml',
         'deployment.yaml.j2'
-    ], True),
-    ([
-        'chart.yaml',
-        'configs/aws'
-    ], False),
-    ([
-        'values.yml',
-        'chart',
-    ], False),
-    ([
+    ],
+    [
         'values.yml',
         'chart.yml',
         'deployment.yml.j2'
-    ], True)
+    ]
 ])
-def test_validate_content(content, passed):
-    assert is_content_valid(content) == passed
+def test_valid_archive_files(files):
+    validate_archive_files(files)
+
+
+@pytest.mark.parametrize('files', [
+    [
+        'chart.yaml',
+        'configs/aws'
+    ],
+    [
+        'values.yml',
+        'chart',
+    ],
+    [
+        'values.yml',
+        'chart.yml',
+        'deployment.yml.j2',
+        'requirements.yaml'
+    ]
+])
+def test_invalid_archive_files(files):
+    with pytest.raises(InvalidChartError):
+        validate_archive_files(files)
 
 
 def test_read_definition():
@@ -66,15 +87,16 @@ def test_read_definition():
 
         assert definition.name == 'redis'
         assert definition.version == '1.0.0'
+        assert definition.description is not None
 
 
-@pytest.mark.parametrize('filename,passed', [
-    ('chart-valid.zip', True),
-    ('chart-invalid-1.zip', False),
-    ('chart-invalid-2.zip', False),
-    ('chart-invalid-3.zip', False),
+@pytest.mark.parametrize('filename', [
+    'chart-invalid-1.zip',
+    'chart-invalid-2.zip',
+    'chart-invalid-3.zip',
 ])
-def test_validate_chart(filename, passed):
+def test_invalid_archive(filename):
     chart_path = os.path.join(get_fixtures_path('charts'), filename)
     with ZipFile(chart_path) as zip_archive:
-        assert is_chart_valid(zip_archive) == passed
+        with pytest.raises(InvalidChartError):
+            validate_chart_archive(zip_archive)

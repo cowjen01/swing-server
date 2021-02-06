@@ -8,7 +8,8 @@ from .helpers import *
 from .config import Config
 from .storage import StorageType
 from .storage import LocalStorage
-from .chart import is_chart_valid, read_definition
+from .chart import validate_chart_archive, read_definition
+from .errors import InvalidChartError
 
 main = Blueprint('main', __name__)
 
@@ -87,18 +88,14 @@ def create_release():
     if not is_valid_filename(file.filename.split('/')[-1]):
         raise BadRequest('Invalid archive file name')
 
-    try:
-        zip_file = ZipFile(file, 'r')
-
-        if not is_chart_valid(zip_file):
-            zip_file.close()
-            raise BadRequest('Invalid chart structure or definition')
-
-        definition = read_definition(zip_file)
-
-        zip_file.close()
-    except BadZipFile:
-        raise BadRequest('Invalid archive file')
+    with ZipFile(file, 'r') as zip_file:
+        try:
+            validate_chart_archive(zip_file)
+            definition = read_definition(zip_file)
+        except BadZipFile:
+            raise BadRequest('Invalid archive file')
+        except InvalidChartError as e:
+            raise BadRequest(e.message)
 
     chart = Chart.query.filter_by(name=definition.name).first()
 
