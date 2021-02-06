@@ -62,8 +62,12 @@ def login():
 @auth.route('/logout', methods=['POST'])
 def logout():
     if not current_user.is_authenticated:
-        return {}
+        return {
+            'status': 'Not logged in'
+        }
 
     logout_user()
 
-    return {}
+    return {
+        'status': 'Logged out'
+    }

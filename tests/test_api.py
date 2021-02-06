@@ -50,13 +50,7 @@ class ApiGeneralTest(ApiTestCase):
         self.assert200(response)
         self.assertEqual(len(response.json), 1)
         self.assertEqual(response.json[0].get('version'), '1.0.0')
-
-    def test_list_releases_with_version(self):
-        response = self.client.get('/release', query_string={'chart': 'redis', 'version': '1.0'})
-
-        self.assert200(response)
-        self.assertEqual(len(response.json), 1)
-        self.assertEqual(response.json[0].get('version'), '1.0.0')
+        self.assertEqual(response.json[0].get('notes'), 'First release')
 
     def test_list_releases_empty_chart_name(self):
         response = self.client.get('/release')
@@ -101,7 +95,8 @@ class ApiGeneralTest(ApiTestCase):
 
             release = Release(
                 chart_id=chart1.id,
-                version='1.0.0'
+                version='1.0.0',
+                notes='First release'
             )
             db.session.add(release)
             db.session.commit()

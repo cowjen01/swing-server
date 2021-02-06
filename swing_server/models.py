@@ -62,6 +62,7 @@ class Release(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chart_id = db.Column(db.Integer, db.ForeignKey('charts.id'), nullable=False)
     version = db.Column(db.String, nullable=False)
+    notes = db.Column(db.Text, nullable=True)
     release_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     chart = db.relationship('Chart', backref=db.backref('releases', lazy=True))
 
@@ -72,5 +73,6 @@ class Release(db.Model):
         return {
             'version': self.version,
             'releaseDate': self.release_date,
+            'notes': self.notes,
             'archiveUrl': f'{Config.PUBLIC_URL}/release/{self.get_name()}.zip'
         }

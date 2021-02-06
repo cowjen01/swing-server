@@ -116,7 +116,9 @@ def create_release():
     if release:
         raise BadRequest(f'Release {release.version} already exists')
     else:
-        release = Release(chart_id=chart.id, version=definition.version)
+        notes = request.form.get('notes')
+
+        release = Release(chart_id=chart.id, version=definition.version, notes=notes)
         chart.description = definition.description
 
         db.session.add(release)
@@ -142,18 +144,8 @@ def list_releases():
     if not chart:
         raise NotFound(f'Chart {chart_name} not found')
 
-    version = request.args.get('version')
-
-    if version and not is_valid_version(version):
-        raise BadRequest('Invalid release version')
-
     release_query = Release.query.order_by(Release.version.desc())
-
-    if version:
-        version_filter = Release.version.like(f'{version}%')
-        releases = release_query.filter(version_filter).all()
-    else:
-        releases = release_query.all()
+    releases = release_query.filter_by(chart_id=chart.id).all()
 
     if not releases:
         return jsonify([])
