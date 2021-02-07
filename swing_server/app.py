@@ -2,10 +2,10 @@ from flask import Flask, json
 from flask_session import Session
 from werkzeug import exceptions
 
-from .models import db
-from .config import Config, validate_config
-from .auth import auth as auth_blueprint, login_manager
 from .api import main as main_blueprint
+from .auth import auth as auth_blueprint, login_manager
+from .config import Config, validate_config
+from .models import db
 
 session = Session()
 

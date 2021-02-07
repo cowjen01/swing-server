@@ -2,8 +2,8 @@ from flask import Blueprint, request
 from flask_login import login_user, LoginManager, current_user, logout_user
 from werkzeug.exceptions import NotFound, BadRequest, Unauthorized, Forbidden
 
-from .models import User, db, make_user
 from .config import Config
+from .models import User, db, make_user
 
 login_manager = LoginManager()
 

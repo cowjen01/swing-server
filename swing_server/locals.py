@@ -1,4 +1,3 @@
-
 class ErrorMessage:
     CHART_DEFINITION_NAME_EMPTY = 'Chart\'s definition name is empty'
     CHART_DEFINITION_VERSION_EMPTY = 'Chart\'s definition version is empty'

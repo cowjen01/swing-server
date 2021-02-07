@@ -1,9 +1,10 @@
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
 from datetime import datetime
 
-from .helpers import check_password, hash_password
+from flask_login import UserMixin
+from flask_sqlalchemy import SQLAlchemy
+
 from .config import Config
+from .helpers import check_password, hash_password
 
 db = SQLAlchemy()
 

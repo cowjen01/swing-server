@@ -1,15 +1,16 @@
 from zipfile import ZipFile, BadZipFile
+
 from flask import Blueprint, jsonify, request, send_file
 from flask_login import login_required, current_user
 from werkzeug.exceptions import NotFound, BadRequest, Forbidden, InternalServerError
 
-from .models import Chart, Release, db
-from .helpers import *
-from .config import Config
-from .storage import StorageType
-from .storage import LocalStorage
 from .chart import validate_chart_archive, read_definition
+from .config import Config
 from .errors import InvalidChartError
+from .helpers import *
+from .models import Chart, Release, db
+from .storage import LocalStorage
+from .storage import StorageType
 
 main = Blueprint('main', __name__)
 

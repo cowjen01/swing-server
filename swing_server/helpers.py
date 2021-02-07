@@ -1,7 +1,7 @@
 import os
 import re
-from werkzeug.security import check_password_hash, generate_password_hash
 
+from werkzeug.security import check_password_hash, generate_password_hash
 
 version_regex = r'^\d+(?:\.\d+)+$'
 name_regex = r'^[a-z]+(?:-[a-z]+)*$'
