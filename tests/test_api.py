@@ -109,7 +109,7 @@ class ApiReleaseTest(ApiTestCase):
     def test_a_publish_release(self):
         self.login('user123@gmail.com', 'pass123')
 
-        chart_path = os.path.join(get_fixtures_path('charts'), 'chart-valid.zip')
+        chart_path = os.path.join(get_fixtures_path('charts'), 'valid.zip')
         with open(chart_path, 'rb') as zip_archive:
             data = dict(
                 chart=(zip_archive, 'redis-1.0.0.zip')

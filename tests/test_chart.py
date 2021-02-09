@@ -81,7 +81,7 @@ def test_invalid_archive_files(files):
 
 
 def test_read_definition():
-    chart_path = os.path.join(get_fixtures_path('charts'), 'chart-valid.zip')
+    chart_path = os.path.join(get_fixtures_path('charts'), 'valid.zip')
     with ZipFile(chart_path) as zip_archive:
         definition = read_definition(zip_archive)
 
@@ -91,9 +91,9 @@ def test_read_definition():
 
 
 @pytest.mark.parametrize('filename', [
-    'chart-invalid-1.zip',
-    'chart-invalid-2.zip',
-    'chart-invalid-3.zip',
+    'invalid-1.zip',
+    'invalid-2.zip',
+    'invalid-3.zip',
 ])
 def test_invalid_archive(filename):
     chart_path = os.path.join(get_fixtures_path('charts'), filename)
