@@ -43,14 +43,6 @@ def test_validate_chart_name(name, expected):
     assert is_valid_chart_name(name) == expected
 
 
-@pytest.mark.parametrize('path,expected', [
-    ('foo/path/boo', False),
-    (get_fixtures_path('charts'), True),
-])
-def test_validate_path(path, expected):
-    assert is_readable_dir(path) == expected
-
-
 @pytest.mark.parametrize('password', [
     'test123',
     'supersecret'

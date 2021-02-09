@@ -10,8 +10,8 @@ class ApiGeneralTest(ApiTestCase):
 
         self.assert200(response)
         self.assertEqual(len(response.json), 2)
-        self.assertEqual(response.json[0].get('name'), 'redis')
-        self.assertEqual(response.json[1].get('name'), 'psql')
+        self.assertEqual(response.json[0].get('name'), 'psql')
+        self.assertEqual(response.json[1].get('name'), 'redis')
 
     def test_search_charts(self):
         response = self.client.get('/chart', query_string={'query': 'postgres'})

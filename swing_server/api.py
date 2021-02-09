@@ -7,7 +7,7 @@ from werkzeug.exceptions import NotFound, BadRequest, Forbidden, InternalServerE
 from .chart import validate_chart_archive, read_definition
 from .config import Config
 from .errors import InvalidChartError
-from .helpers import *
+from .helpers import to_dicts, is_valid_chart_name, is_valid_version, is_valid_filename, parse_archive_filename
 from .models import Chart, Release, db
 from .storage import LocalStorage
 from .storage import StorageType
@@ -22,7 +22,7 @@ if Config.STORAGE_TYPE == StorageType.LOCAL:
 def list_charts():
     query = request.args.get('query')
 
-    chart_query = Chart.query.order_by(Chart.name.desc())
+    chart_query = Chart.query.order_by(Chart.name.asc())
 
     if query:
         name_filter = (Chart.name.ilike(f'%{query}%') | Chart.description.ilike(f'%{query}%'))
