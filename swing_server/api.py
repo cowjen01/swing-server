@@ -33,7 +33,7 @@ def list_charts():
     if not charts:
         return jsonify([])
 
-    response = list_to_dict(charts)
+    response = to_dicts(charts)
     return jsonify(response)
 
 
@@ -41,26 +41,26 @@ def list_charts():
 @login_required
 def remove_chart(chart_name):
     if not is_valid_chart_name(chart_name):
-        raise BadRequest('Invalid chart name')
+        raise BadRequest(f'The provided chart name \'{chart_name}\' is not valid.')
 
     chart = Chart.query.filter_by(name=chart_name).first()
 
     if not chart:
-        raise NotFound(f'Chart {chart_name} not found')
+        raise NotFound(f'The chart with name \'{chart_name}\' doesn\'t exist.')
 
     if chart.user_id != current_user.id:
-        raise Forbidden('Forbidden delete operation')
+        raise Forbidden('You can\'t delete the chart you don\'t own.')
 
     version = request.args.get('version')
 
     if version:
         if not is_valid_version(version):
-            raise BadRequest('Invalid release version')
+            raise BadRequest(f'The release version \'{version}\' is not valid.')
 
         release = Release.query.filter_by(chart_id=chart.id, version=version).first()
 
         if not release:
-            raise NotFound(f'Release {version} not found')
+            raise NotFound(f'The release with version \'{version}\' doesn\'t exist.')
 
         storage.delete(release.id)
         db.session.delete(release)
@@ -84,17 +84,17 @@ def create_release():
     file = request.files.get('chart')
 
     if not file or file.filename == '':
-        raise BadRequest('Missing chart archive')
+        raise BadRequest('You have to provide archived chart in the request.')
 
     if not is_valid_filename(file.filename.split('/')[-1]):
-        raise BadRequest('Invalid archive file name')
+        raise BadRequest('The file has got invalid file extenstion.')
 
     with ZipFile(file, 'r') as zip_file:
         try:
             validate_chart_archive(zip_file)
             definition = read_definition(zip_file)
         except BadZipFile:
-            raise BadRequest('Invalid archive file')
+            raise BadRequest('The file is not valid ZIP archive.')
         except InvalidChartError as e:
             raise BadRequest(e.message)
 
@@ -102,7 +102,7 @@ def create_release():
 
     if chart:
         if chart.user_id != current_user.id:
-            raise Forbidden('Forbidden release operation')
+            raise Forbidden('You can\'t upload a release of the chart you don\'t own.')
     else:
         chart = Chart(
             name=definition.name,
@@ -115,7 +115,7 @@ def create_release():
     release = Release.query.filter_by(chart_id=chart.id, version=definition.version).first()
 
     if release:
-        raise BadRequest(f'Release {release.version} already exists')
+        raise BadRequest(f'The release with version \'{release.version}\' already exists.')
     else:
         notes = request.form.get('notes')
 
@@ -135,15 +135,15 @@ def list_releases():
     chart_name = request.args.get('chart')
 
     if not chart_name:
-        raise BadRequest('Missing chart name')
+        raise BadRequest('You have to provide the chart name.')
 
     if not is_valid_chart_name(chart_name):
-        raise BadRequest('Invalid chart name')
+        raise BadRequest('The provided chart name \'{chart_name}\' is not valid.')
 
     chart = Chart.query.filter_by(name=chart_name).first()
 
     if not chart:
-        raise NotFound(f'Chart {chart_name} not found')
+        raise NotFound(f'The chart with name \'{chart_name}\' doesn\'t exist.')
 
     release_query = Release.query.order_by(Release.version.desc())
     releases = release_query.filter_by(chart_id=chart.id).all()
@@ -151,31 +151,31 @@ def list_releases():
     if not releases:
         return jsonify([])
 
-    response = list_to_dict(releases)
+    response = to_dicts(releases)
     return jsonify(response)
 
 
 @main.route('/release/<filename>', methods=['GET'])
 def fetch_release(filename):
     if not is_valid_filename(filename):
-        raise BadRequest('Invalid archive file name')
+        raise BadRequest('The requested archive filename is not valid.')
 
     chart_name, version = parse_archive_filename(filename)
 
     chart = Chart.query.filter_by(name=chart_name).first()
 
     if not chart:
-        raise NotFound('Chart not found')
+        raise NotFound(f'The chart with name \'{chart_name}\' doesn\'t exist.')
 
     release = Release.query.filter_by(chart_id=chart.id, version=version).first()
 
     if not release:
-        raise NotFound('Release not found')
+        raise NotFound(f'The release with version \'{version}\' doesn\'t exist.')
 
     file_data = storage.download(release.id)
 
     if not file_data:
-        raise InternalServerError('Download failed')
+        raise InternalServerError('The requested archive file is not found.')
 
     file_name = f'{release.get_name()}.zip'
 

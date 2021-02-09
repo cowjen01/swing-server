@@ -24,7 +24,7 @@ def is_readable_dir(path: str) -> bool:
     return os.path.isdir(path) and os.access(path, os.R_OK)
 
 
-def list_to_dict(arr):
+def to_dicts(arr):
     return [x.to_dict() for x in arr]
 
 

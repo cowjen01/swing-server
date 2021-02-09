@@ -2,7 +2,6 @@ import yaml
 
 from .errors import InvalidChartError
 from .helpers import is_valid_version, is_valid_chart_name
-from .locals import ErrorMessage
 
 
 class ChartDefinition:
@@ -18,30 +17,30 @@ class ChartDefinition:
 
 def validate_chart_definition(definition):
     if not definition.name:
-        raise InvalidChartError(ErrorMessage.CHART_DEFINITION_NAME_EMPTY)
+        raise InvalidChartError('The chart\'s name is empty.')
 
     if not definition.version:
-        raise InvalidChartError(ErrorMessage.CHART_DEFINITION_VERSION_EMPTY)
+        raise InvalidChartError('The chart\'s version is empty.')
 
     if not is_valid_chart_name(definition.name):
-        raise InvalidChartError(ErrorMessage.CHART_DEFINITION_NAME_INVALID)
+        raise InvalidChartError('The chart\'s name is not valid.')
 
     if not is_valid_version(definition.version):
-        raise InvalidChartError(ErrorMessage.CHART_DEFINITION_VERSION_INVALID)
+        raise InvalidChartError('The chart\'s version is not valid.')
 
 
 def validate_archive_files(files):
     if 'chart.yaml' not in files and 'chart.yml' not in files:
-        raise InvalidChartError(ErrorMessage.CHART_FILES_DEFINITION_EMPTY)
+        raise InvalidChartError('The chart\'s definition (chart.yaml) is not found.')
 
     if 'values.yaml' not in files and 'values.yml' not in files:
-        raise InvalidChartError(ErrorMessage.CHART_FILES_VALUES_EMPTY)
+        raise InvalidChartError('The chart\'s default values (values.yaml) are not found.')
 
     if 'deployment.yaml' not in files and 'deployment.yml' not in files:
-        raise InvalidChartError(ErrorMessage.CHART_FILES_DEPLOYMENT_EMPTY)
+        raise InvalidChartError('The chart\'s deployment specification (deployment.yaml) is not found.')
 
     if 'requirements.yaml' in files or 'requirements.yml' in files:
-        raise InvalidChartError(ErrorMessage.CHART_FILES_REQUIREMENTS_PRESENT)
+        raise InvalidChartError('The recursive dependencies (requirements.yaml) are not supported.')
 
 
 def read_definition(zip_archive) -> ChartDefinition:
