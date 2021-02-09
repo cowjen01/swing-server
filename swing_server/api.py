@@ -41,12 +41,12 @@ def list_charts():
 @login_required
 def remove_chart(chart_name):
     if not is_valid_chart_name(chart_name):
-        raise BadRequest(f'The provided chart name \'{chart_name}\' is not valid.')
+        raise BadRequest(f'The provided chart\'s name \'{chart_name}\' is not valid.')
 
     chart = Chart.query.filter_by(name=chart_name).first()
 
     if not chart:
-        raise NotFound(f'The chart with name \'{chart_name}\' doesn\'t exist.')
+        raise NotFound(f'The chart with the name \'{chart_name}\' doesn\'t exist.')
 
     if chart.user_id != current_user.id:
         raise Forbidden('You can\'t delete the chart you don\'t own.')
@@ -55,12 +55,12 @@ def remove_chart(chart_name):
 
     if version:
         if not is_valid_version(version):
-            raise BadRequest(f'The release version \'{version}\' is not valid.')
+            raise BadRequest(f'The release\'s version \'{version}\' is not valid.')
 
         release = Release.query.filter_by(chart_id=chart.id, version=version).first()
 
         if not release:
-            raise NotFound(f'The release with version \'{version}\' doesn\'t exist.')
+            raise NotFound(f'The release with the version \'{version}\' doesn\'t exist.')
 
         storage.delete(release.id)
         db.session.delete(release)
@@ -115,7 +115,7 @@ def create_release():
     release = Release.query.filter_by(chart_id=chart.id, version=definition.version).first()
 
     if release:
-        raise BadRequest(f'The release with version \'{release.version}\' already exists.')
+        raise BadRequest(f'The release with the version \'{release.version}\' already exists.')
     else:
         notes = request.form.get('notes')
 
@@ -135,7 +135,7 @@ def list_releases():
     chart_name = request.args.get('chart')
 
     if not chart_name:
-        raise BadRequest('You have to provide the chart name.')
+        raise BadRequest('You have to provide the chart\'s name.')
 
     if not is_valid_chart_name(chart_name):
         raise BadRequest('The provided chart name \'{chart_name}\' is not valid.')
@@ -143,7 +143,7 @@ def list_releases():
     chart = Chart.query.filter_by(name=chart_name).first()
 
     if not chart:
-        raise NotFound(f'The chart with name \'{chart_name}\' doesn\'t exist.')
+        raise NotFound(f'The chart with the name \'{chart_name}\' doesn\'t exist.')
 
     release_query = Release.query.order_by(Release.version.desc())
     releases = release_query.filter_by(chart_id=chart.id).all()
@@ -165,12 +165,12 @@ def fetch_release(filename):
     chart = Chart.query.filter_by(name=chart_name).first()
 
     if not chart:
-        raise NotFound(f'The chart with name \'{chart_name}\' doesn\'t exist.')
+        raise NotFound(f'The chart with the name \'{chart_name}\' doesn\'t exist.')
 
     release = Release.query.filter_by(chart_id=chart.id, version=version).first()
 
     if not release:
-        raise NotFound(f'The release with version \'{version}\' doesn\'t exist.')
+        raise NotFound(f'The release with the version \'{version}\' doesn\'t exist.')
 
     file_data = storage.download(release.id)
 
