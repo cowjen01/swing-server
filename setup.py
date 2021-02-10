@@ -7,9 +7,10 @@ with open('README.md') as f:
 
 setup(
     name='swing_server',
-    version='0.1',
+    version='0.2',
     description='An open-source Swing chart repository server',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     author='Jan Šafařík',
     author_email='cowjen01@gmail.com',
     keywords='docker,swarm,repository',
