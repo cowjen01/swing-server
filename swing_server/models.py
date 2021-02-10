@@ -19,6 +19,10 @@ def make_user(email, password):
 
 
 class User(UserMixin, db.Model):
+    """
+    Model of the user, where the user can log in to
+    the system using his email and password.
+    """
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -42,6 +46,10 @@ class User(UserMixin, db.Model):
 
 
 class Chart(db.Model):
+    """
+    Model of the chart, where every chart is uniquely
+    identified by its name and every chart has its owner.
+    """
     __tablename__ = 'charts'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -58,6 +66,10 @@ class Chart(db.Model):
 
 
 class Release(db.Model):
+    """
+    Model of the chart release, where each release
+    is uniquely identified by its version.
+    """
     __tablename__ = 'releases'
 
     id = db.Column(db.Integer, primary_key=True)

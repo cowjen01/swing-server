@@ -12,6 +12,10 @@ auth = Blueprint('auth', __name__)
 
 @auth.before_app_first_request
 def init_user():
+    """
+    After the Flask application starts, create
+    an initial user using environment variables.
+    """
     if Config.INIT_USER_EMAIL and Config.INIT_USER_PASSWORD:
         user = User.query.filter_by(email=Config.INIT_USER_EMAIL).first()
 
@@ -29,30 +33,34 @@ def load_user(user_id):
 
 @auth.route('/login', methods=['POST'])
 def login():
+    """
+    Make user login using encoded credentials sent in the Authorization
+    header of the request. The user's account has to be activated.
+    """
     if current_user.is_authenticated:
         return current_user.to_dict()
 
     credentials = request.authorization
 
     if not credentials:
-        raise BadRequest('Missing credentials')
+        raise BadRequest('Login credentials were not provided.')
 
     email = credentials.username
     password = credentials.password
 
     if not email or not password:
-        raise BadRequest('Invalid auth method')
+        raise BadRequest('Provided credentials have not got a valid format.')
 
     user = User.query.filter_by(email=email).first()
 
     if not user:
-        raise NotFound('User not found')
+        raise NotFound(f'No user with email \'{email}\' was found.')
 
     if not user.check_password(password):
-        raise Unauthorized('Invalid credentials')
+        raise Unauthorized('Provided credentials do not match any account.')
 
     if not user.is_active():
-        raise Forbidden('Account is not active')
+        raise Forbidden('The account is not activated, so it could not be logged in.')
 
     login_user(user)
 
@@ -61,13 +69,16 @@ def login():
 
 @auth.route('/logout', methods=['POST'])
 def logout():
+    """
+    Log out currently logged user.
+    """
     if not current_user.is_authenticated:
         return {
-            'status': 'Not logged in'
+            'status': 'You are currently not logged in.'
         }
 
     logout_user()
 
     return {
-        'status': 'Logged out'
+        'status': 'You have been logged out.'
     }

@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 from .helpers import create_directory
 from .storage import StorageType
+from .errors import InvalidConfigError
 
 basedir = path.abspath(path.dirname(__file__))
 load_dotenv(path.join(basedir, '.env'))
@@ -23,32 +24,35 @@ class Config:
 
 
 def validate_config():
+    """
+    Make validation of the environment variables.
+    """
     if not Config.SECRET_KEY:
-        raise Exception('Missing SECRET_KEY variable')
+        raise InvalidConfigError('Secret key can not be empty.')
 
     if not Config.DATABASE_URI:
-        raise Exception('Missing DATABASE_URI variable')
+        raise InvalidConfigError('Database URI can not be empty.')
 
     if Config.STORAGE_TYPE not in [StorageType.LOCAL]:
-        raise Exception('Invalid STORAGE_TYPE variable')
+        raise InvalidConfigError('Requested storage type is not valid.')
 
     if Config.STORAGE_TYPE == StorageType.LOCAL:
         if not Config.STORAGE_LOCAL_DIR:
-            raise Exception('Missing STORAGE_LOCAL_DIR variable')
+            raise InvalidConfigError('Local storage directory can not be empty.')
 
         try:
             create_directory(Config.STORAGE_LOCAL_DIR)
         except OSError as e:
-            raise Exception('Invalid STORAGE_LOCAL_DIR path')
+            raise InvalidConfigError('Local storage directory could not be created.')
 
     if Config.SESSION_TYPE == 'filesystem':
         if not Config.SESSION_FILE_DIR:
-            raise Exception('Missing SESSION_FILE_DIR variable')
+            raise InvalidConfigError('Directory for the session files can not be empty.')
 
         try:
             create_directory(Config.SESSION_FILE_DIR)
         except OSError as e:
-            raise Exception('Invalid SESSION_FILE_DIR path')
+            raise InvalidConfigError('Directory for the session files could not be created.')
 
     if Config.INIT_USER_EMAIL and not Config.INIT_USER_PASSWORD:
-        raise Exception('Missing INIT_USER_PASSWORD variable')
+        raise InvalidConfigError('Initial user password can not be empty.')

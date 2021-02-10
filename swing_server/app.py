@@ -6,14 +6,24 @@ from .api import main as main_blueprint
 from .auth import auth as auth_blueprint, login_manager
 from .config import Config, validate_config
 from .models import db
+from .errors import InvalidConfigError
 
 session = Session()
 
 
 def create_app():
+    """
+    Create Flask application and setup all configurations.
+    Before the application instance is returned, provide validation
+    of the configuration settings. All exceptions are handled in one
+    place and returned as a JSON object with an error description.
+    """
     app = Flask(__name__)
 
-    validate_config()
+    try:
+        validate_config()
+    except InvalidConfigError as e:
+        print(e.message)
 
     app.config['SQLALCHEMY_DATABASE_URI'] = Config.DATABASE_URI
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
