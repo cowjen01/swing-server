@@ -20,7 +20,7 @@ setup(
     install_requires=[
         'flask~=1.1.2',
         'python-dotenv~=0.15.0',
-        'psycopg2~=2.8.6',
+        'psycopg2-binary~=2.8.6',
         'flask-login~=0.5.0',
         'flask-sqlalchemy~=2.4.4',
         'flask-session~=0.3.2',
